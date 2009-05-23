@@ -5,7 +5,12 @@ class CustomMatcher
   def self.create(class_name, &block)
     klass = Class.new(CustomMatcher)
     klass.send(:define_method, :matcher, &block) if block_given?
-    Object.const_set(build_class_name(class_name), klass)
+    klass_name = build_class_name(class_name)
+    if Object.const_defined?(klass_name)
+      Object.const_get(klass_name)
+    else
+      Object.const_set(klass_name, klass)
+    end
   end
   
   def initialize(*expected)
